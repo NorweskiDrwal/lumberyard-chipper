@@ -1,0 +1,14 @@
+# Ignore artifacts:
+.expo
+.expo-shared
+ios
+android
+package.json
+README.md
+metro.config.js
+babel.config.js
+tsconfig.json
+web-build
+__tests__
+app.json
+dist
