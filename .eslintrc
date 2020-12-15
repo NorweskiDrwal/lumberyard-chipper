@@ -1,30 +1,56 @@
 {
   "root": true,
-  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended", // Uses the recommended rules from @eslint-plugin-react
+    "plugin:@typescript-eslint/eslint-recommended", // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    "plugin:@typescript-eslint/recommended", // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    "prettier/@typescript-eslint" // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+  ],
+  "parser": "@typescript-eslint/parser", // Specifies the ESLint parser
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
   "parserOptions": {
-    "ecmaVersion": 2020,
-    "sourceType": "module",
+    "ecmaVersion": 2020, // Allows for the parsing of modern ECMAScript features
+    "sourceType": "module", // Allows for the use of imports
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true, // Allows for the parsing of JSX
+      "arrowFunctions": true
     }
   },
+  "plugins": ["react", "@typescript-eslint", "prettier"],
   "settings": {
     "react": {
-      "version": "detect"
+      "version": "detect" // Tells eslint-plugin-react to automatically detect the version of React to use
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "paths": ["."]
+      }
     }
   },
-  "extends": [
-    "plugin:react/recommended", // Uses the recommended rules from @eslint-plugin-react
-    "plugin:@typescript-eslint/recommended", // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-    "prettier/@typescript-eslint", // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
-    "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
-  ],
   "rules": {
+    // Existing rules
+    "comma-dangle": "off", // https://eslint.org/docs/rules/comma-dangle
+    "global-require": "off", // https://eslint.org/docs/rules/global-require
+    "no-inner-declarations": "off", // https://eslint.org/docs/rules/no-inner-declarations
+    "function-paren-newline": "off", // https://eslint.org/docs/rules/function-paren-newline
+    "import/no-dynamic-require": "off", // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-dynamic-require.md
+    // New rules
     "no-console": 0,
     "prettier/prettier": 2,
-    "react/prop-types": 0,
-    "react/no-unescaped-entities": 0,
-    "@typescript-eslint/explicit-module-boundary-types": 0,
-    "@typescript-eslint/no-explicit-any": 0
+    "react/prop-types": "off",
+    "import/extensions": "off",
+    "class-methods-use-this": "off",
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   }
 }
