@@ -67,8 +67,7 @@ export interface IChipper<T = unknown> {
   setStatus(type: Type.IStatus['type'], message?: Type.IStatus['message']): void;
 }
 
-type IChipperComponentProps<T = unknown> = T & {
-  chipper: IChipper<T>;
-  ignoreStatus?: boolean;
+export type ChipComponentProps<T = unknown> = T & {
+  chip?: IChipper<T>;
 };
-export type Chip<T = unknown> = React.FC<IChipperComponentProps<T>>;
+export type Chip<T = unknown> = React.FC<ChipComponentProps<T>>;
