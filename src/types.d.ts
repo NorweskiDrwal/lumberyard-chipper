@@ -1,73 +1,56 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Draft } from 'immer';
-
-export type IData<T> = T | null | undefined | Promise<T | void>;
-export type IRoots<T = unknown> = Map<string, IRootify<T>>;
-export type IBranches<T = unknown> = Map<string, IBranch<T>>;
-export type IStatusType = 'LOAD' | 'ERROR' | 'SUCCESS' | 'IDLE';
-export type IDispatch<T> = (f: (draft: IReducer<T>) => void) => void;
-
-export interface IRootify<T = unknown> {
-  chip: IChip<T>;
-  unroot?: boolean;
+export type ISeedOptions<BranchState = any> = Partial<{
+  unrooted: boolean;
+  branches: [string, BranchState][];
+}>;
+export type IRoots<RootState = any> = Map<string, ITrunk<RootState>>;
+export interface ITrunk<TrunkState = any> {
   trunkKey: string;
-  branches: IBranches<T>;
+  chip: IChip<TrunkState>;
+  branches: IBranches<TrunkState>;
 }
-export interface IBranch<T = unknown> {
-  chip: IChip<T>;
+export type IBranches<State = any> = Map<string, IBranch<State>>;
+export interface IBranch<BranchState = any> {
   branchKey: string;
+  chip: IChip<BranchState>;
+  twigs: ITwigs<BranchState>;
 }
-
-export interface IReducer<T> {
-  data: IData<T>;
-  status: IStatus;
+export type ITwigs<State = any> = Map<string, ITwig<State>>;
+export interface ITwig<TwigState = any> {
+  twigKey: string;
+  chip: IChip<TwigState>;
+  leafs: ILeafs<TwigState>;
 }
-export interface ITrunkOptions {
-  unroot?: boolean;
-  branches?: [string, any][];
-}
-export interface IAsyncActions<T> {
-  onError?: void;
-  timeout?: number;
-  onSuccess?: void;
-  responseWrap?: (...args: any[]) => IData<T>;
-}
-export interface ISubscriber<T> {
-  isMounted: boolean;
-  updater: (v: IData<T> | IStatus) => void;
-}
-export interface IApi<T> {
-  roots?: IRoots<T>;
-  trunk: IRootify<T>;
-}
+export type ILeafs<State = any> = Map<string, IChip<State>>;
 export interface IStatus {
-  type: IStatusType;
+  type: 'LOAD' | 'IDLE' | 'SUCCESS' | 'ERROR';
   message?: Error | string;
 }
-export interface IChip<T = unknown> {
-  data: IData<T>;
-  status: IStatus;
-  //
-  getData(): IData<T>;
-  setData(data: IData<T>): void;
-  setStatus(type: Type.IStatus['type'], message?: Type.IStatus['message']): void;
-  //
-  subscribers: ISubscriber<T>[];
-  subscribe(cb: ISubscriber<T>['updater']): void;
-  unsubscribe(cb: ISubscriber<T>['updater']): void;
-  //
-  readonly chipKey: string;
-}
-export interface IChipper<T = unknown> {
-  api: IApi<T>;
-  data: IChip<T>['data'];
-  status: IStatus;
-  setData: (data: IData<T>) => void;
-  setAsyncData(async: IData<any>, actions?: IAsyncActions<T>): void;
-  setStatus(type: Type.IStatus['type'], message?: Type.IStatus['message']): void;
+export interface IAsyncActions<T> {
+  onError?: () => void;
+  onSuccess?: () => void;
+  responseWrap?: (...args: any[]) => IChip<T>['data'];
 }
 
-export type ChipComponentProps<T = unknown> = T & {
-  chip?: IChipper<T>;
-};
-export type Chip<T = unknown> = React.FC<ChipComponentProps<T>>;
+export interface IChip<ChipState = any> {
+  data: ChipState | null | undefined;
+  chipKey: string;
+  status: IStatus;
+  subscribers: any[];
+  //
+  getData: () => IChip['data'];
+  getStatus: () => IChip['status'];
+  //
+  setData: (data: IChip['data'], actions?: IAsyncActions<ChipState>) => void;
+  setStatus: (type: TS.IStatus['type'], message?: TS.IStatus['message']) => void;
+  //
+  subscribe: (updater: any) => void;
+  unsubscribe: (updater: any) => void;
+}
+
+export interface IChipper<ChipperState = any> {
+  data: IChip<ChipperState>['data'];
+  status: IChip<ChipperState>['status'];
+  setData: IChip<ChipperState>['setData'];
+  setStatus: IChip<ChipperState>['setStatus'];
+}
