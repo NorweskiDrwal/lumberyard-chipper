@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import produce from 'immer';
 import * as TS from '../types';
 
 export default async function setAsync<State>(
   async: Promise<TS.IData<State> | void>,
   chip: TS.IChip<State>,
-  actions?: TS.IAsyncActions<State>,
+  asyncActions?: TS.IAsyncActions<State>,
 ) {
   async function runAsync(): Promise<TS.IData<State>> {
     try {
@@ -17,27 +18,31 @@ export default async function setAsync<State>(
     }
   }
 
-  async function* createAsyncGenerator(actions?: TS.IAsyncActions<State>) {
+  async function* createAsyncGenerator(asyncActions?: TS.IAsyncActions<State>) {
     // runAsyncAction_onInit
-    yield actions?.onInit && actions.onInit();
+    yield asyncActions?.onInit && asyncActions.onInit();
     // runAsync_Load
     yield chip.setStatus({ type: 'LOAD' });
     // runAsync_Response
     const resp = await runAsync();
     yield await resp;
     // runAsyncAction_onError
-    if (resp === 'ERROR') return actions?.onError && actions.onError();
+    if (resp === 'ERROR') return asyncActions?.onError && asyncActions.onError();
     yield;
     // runAsync_SetData
-    const data = actions?.responseWrap ? actions.responseWrap(resp) : resp;
-    yield (chip.data = data);
+    const update = asyncActions?.responseWrap ? asyncActions.responseWrap(resp) : resp;
+    // yield (chip.data = update);
+    if (typeof update === 'function') {
+      if (typeof chip.data === 'string') yield ((chip.data as any) = produce({}, update as any));
+      else yield ((chip.data as any) = produce(chip.data, update as any));
+    } else yield (chip.data = update);
     // runAsync_Success
     yield chip.setStatus({ type: 'SUCCESS' });
     // runAsyncAction_onSuccess
-    return actions?.onSuccess && actions.onSuccess();
+    return asyncActions?.onSuccess && asyncActions.onSuccess();
   }
 
-  const AsyncGenerator = createAsyncGenerator(actions);
+  const AsyncGenerator = createAsyncGenerator(asyncActions);
 
   const runAsyncAction_onInit = AsyncGenerator.next();
   runAsyncAction_onInit;

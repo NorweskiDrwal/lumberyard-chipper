@@ -7,7 +7,7 @@ const Three: React.FC = () => {
 
   return (
     <div>
-      <div style={{ backgroundColor: 'red' }}>
+      <div style={{ backgroundColor: 'red', margin: 4, padding: 4 }}>
         <p>authentication</p>
         <div>{JSON.stringify(authentication.data)}</div>
         <div>{authentication.status.type}</div>

@@ -12,7 +12,13 @@ plantTree(
     branches: [['tokens', { user: { uid: '123456789', remote: 'd7gh473nd7' } }]],
   },
 );
-plantTree('two', 'two data');
+plantTree(
+  'location',
+  { geo: 'everywhere' },
+  {
+    branches: [['place', { city: { uid: '6uehthgd', remote: 'j4hbgh4' } }]],
+  },
+);
 
 const Example: React.FC = () => {
   return (
