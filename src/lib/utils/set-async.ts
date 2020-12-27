@@ -1,55 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as TS from '../../types';
 
-export default async function setAsync<T>(
-  async: Promise<T | void>,
-  chip: TS.IChip<T>,
-  actions?: TS.IAsyncActions<T>,
+export default async function setAsync<State>(
+  async: Promise<TS.IData<State> | void>,
+  chip: TS.IChip<State>,
+  actions?: TS.IAsyncActions<State>,
 ) {
-  async function runAsync(): Promise<any> {
-    let result = null;
-    const isPromise = async instanceof Promise;
-
-    if (isPromise) {
-      await async
-        .then((resp) => {
-          result = resp;
-        })
-        .catch((error) => {
-          result = 'ERROR';
-          chip.setStatus({ type: 'ERROR', message: error });
-        });
+  async function runAsync(): Promise<TS.IData<State>> {
+    try {
+      const resp = await async;
+      return resp || null;
+    } catch (error) {
+      chip.setStatus({ type: 'ERROR', message: error });
+      return 'ERROR';
     }
-
-    return result;
+    return;
   }
 
-  async function* createAsyncGenerator(actions?: TS.IAsyncActions<T>) {
+  async function* createAsyncGenerator(actions?: TS.IAsyncActions<State>) {
+    // runAsyncAction_onInit
+    yield actions?.onInit && actions.onInit();
     // runAsync_Load
     yield chip.setStatus({ type: 'LOAD' });
     // runAsync_Response
     const resp = await runAsync();
     yield await resp;
+    // runAsyncAction_onError
+    if (resp === 'ERROR') return actions?.onError && actions.onError();
+    yield;
     // runAsync_SetData
     const data = actions?.responseWrap ? actions.responseWrap(resp) : resp;
     yield (chip.data = data);
     // runAsync_Success
-    return chip.setStatus({ type: 'SUCCESS' });
+    chip.setStatus({ type: 'SUCCESS' });
+    return actions?.onSuccess && actions.onSuccess();
   }
 
   const AsyncGenerator = createAsyncGenerator(actions);
 
+  const runAsyncAction_onInit = AsyncGenerator.next();
+  runAsyncAction_onInit;
   const runAsync_Load = AsyncGenerator.next();
   runAsync_Load;
-
   const runAsync_Response = await AsyncGenerator.next();
-  if (runAsync_Response.value === 'ERROR') return actions?.onError && actions.onError();
-
+  runAsync_Response;
+  const runAsyncAction_onError = AsyncGenerator.next();
+  runAsyncAction_onError;
   const runAsync_SetData = AsyncGenerator.next();
   runAsync_SetData;
-
   const runAsync_Success = AsyncGenerator.next();
   runAsync_Success;
-
-  return actions?.onSuccess && actions.onSuccess();
 }

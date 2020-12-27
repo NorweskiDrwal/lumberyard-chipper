@@ -3,24 +3,31 @@ import * as React from 'react';
 import { plantSeed } from '../lib';
 import One from './One';
 import Two from './Two';
+import Three from './Three';
 
-plantSeed('one', 'one data', {
-  branches: [
-    ['A', '1234567890'],
-    [
-      'B',
-      {
-        something: {
-          else: {
-            entirely: 'hello',
+plantSeed(
+  'one',
+  {
+    id: 'otis',
+  },
+  {
+    branches: [
+      ['A', '1234567890'],
+      [
+        'B',
+        {
+          something: {
+            else: {
+              entirely: 'hello',
+            },
+            bolobo: 'nono',
           },
-          bolobo: 'nono',
+          dudu: 'qwe',
         },
-        dudu: 'qwe',
-      },
+      ],
     ],
-  ],
-});
+  },
+);
 plantSeed('two', 'two data');
 
 const Example: React.FC = () => {
@@ -28,6 +35,7 @@ const Example: React.FC = () => {
     <div>
       <One />
       <Two />
+      <Three />
     </div>
   );
 };

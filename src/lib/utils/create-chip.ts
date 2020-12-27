@@ -1,17 +1,16 @@
+import { produce } from 'immer';
+
 import * as TS from '../../types';
 import setAsync from './set-async';
 
-export function createChip<ChipState = unknown>(
+export default function createChip<ChipState = unknown>(
   chipKey: string,
   chipState: ChipState,
 ): TS.IChip<ChipState> {
-  //
   return {
     chipKey,
     data: chipState,
-    status: {
-      type: 'IDLE',
-    },
+    status: { type: 'IDLE' },
     subscribers: [],
     getData() {
       return this.data;
@@ -19,14 +18,19 @@ export function createChip<ChipState = unknown>(
     getStatus() {
       return this.status;
     },
-    setData(data, actions) {
-      if (data instanceof Promise) {
-        setAsync<ChipState>(data, this, actions);
-      } else {
-        this.data = data;
-        this.setStatus({ type: 'IDLE' });
-      }
+    setData(update) {
+      this.data = update(this.data);
+      // if (typeof update === 'function') {
+      // }
     },
+    // setData(data, actions) {
+    //   if (data instanceof Promise) {
+    //     setAsync<ChipState>(data, this, actions);
+    //   } else {
+    //     this.data = data;
+    //     this.setStatus({ type: 'IDLE' });
+    //   }
+    // },
     setStatus(status) {
       this.status = status;
       this.subscribers.forEach((sub) => {
@@ -37,7 +41,7 @@ export function createChip<ChipState = unknown>(
       this.subscribers.push(updater);
     },
     unsubscribe(updater) {
-      this.subscribers = this.subscribers.filter((sub) => sub(updater) !== updater);
+      this.subscribers = this.subscribers.filter((sub) => sub !== updater);
     },
   };
 }
