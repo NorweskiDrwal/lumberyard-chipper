@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as TS from '../../types';
+
+import * as TS from '../types';
 
 export default async function setAsync<State>(
   async: Promise<TS.IData<State> | void>,
@@ -14,7 +15,6 @@ export default async function setAsync<State>(
       chip.setStatus({ type: 'ERROR', message: error });
       return 'ERROR';
     }
-    return;
   }
 
   async function* createAsyncGenerator(actions?: TS.IAsyncActions<State>) {
@@ -32,7 +32,8 @@ export default async function setAsync<State>(
     const data = actions?.responseWrap ? actions.responseWrap(resp) : resp;
     yield (chip.data = data);
     // runAsync_Success
-    chip.setStatus({ type: 'SUCCESS' });
+    yield chip.setStatus({ type: 'SUCCESS' });
+    // runAsyncAction_onSuccess
     return actions?.onSuccess && actions.onSuccess();
   }
 
@@ -50,4 +51,6 @@ export default async function setAsync<State>(
   runAsync_SetData;
   const runAsync_Success = AsyncGenerator.next();
   runAsync_Success;
+  const runAsyncAction_onSuccess = AsyncGenerator.next();
+  runAsyncAction_onSuccess;
 }

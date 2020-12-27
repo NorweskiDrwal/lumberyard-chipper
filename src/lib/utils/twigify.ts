@@ -1,8 +1,10 @@
-import * as TS from '../../types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import * as TS from '../types';
 import { createChip } from '../utils';
 
 export default function twigify<State = any>(parentKey: string, state: State) {
-  const twigs = Object.entries(state)
+  return Object.entries(state)
     .map(([key, twigValue]) => {
       const twigKey = `${parentKey}.${key}`;
       if (typeof twigValue !== 'string') {
@@ -11,21 +13,13 @@ export default function twigify<State = any>(parentKey: string, state: State) {
           const Leaf = { leafKey, chip: createChip(leafKey, leafValue) };
           return [leafKey, Leaf];
         });
-        const Twig = {
-          twigKey,
-          chip: createChip(twigKey, twigValue),
-          leafs: new Map((leafify as unknown) as TS.ILeafs<State>),
-        };
+        const leafs = new Map((leafify as unknown) as TS.ILeafs<State>);
+        const Twig = { leafs, twigKey, chip: createChip(twigKey, twigValue) };
         return [twigKey, Twig];
       } else {
-        const Twig = {
-          twigKey,
-          leafs: undefined,
-          chip: createChip(twigKey, twigValue),
-        };
+        const Twig = { twigKey, leafs: undefined, chip: createChip(twigKey, twigValue) };
         return [twigKey, Twig];
       }
     })
     .filter((s) => s);
-  return twigs;
 }

@@ -1,34 +1,18 @@
 import * as React from 'react';
 
-import { plantSeed } from '../lib';
+import { plantTree } from '../lib';
 import One from './One';
 import Two from './Two';
 import Three from './Three';
 
-plantSeed(
-  'one',
+plantTree(
+  'authentication',
+  { certificate: 'zzz000zz00z0' },
   {
-    id: 'otis',
-  },
-  {
-    branches: [
-      ['A', '1234567890'],
-      [
-        'B',
-        {
-          something: {
-            else: {
-              entirely: 'hello',
-            },
-            bolobo: 'nono',
-          },
-          dudu: 'qwe',
-        },
-      ],
-    ],
+    branches: [['tokens', { user: { uid: '123456789', remote: 'd7gh473nd7' } }]],
   },
 );
-plantSeed('two', 'two data');
+plantTree('two', 'two data');
 
 const Example: React.FC = () => {
   return (

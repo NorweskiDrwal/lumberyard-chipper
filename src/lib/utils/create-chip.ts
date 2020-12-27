@@ -1,12 +1,10 @@
 import { produce } from 'immer';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as TS from '../../types';
-import setAsync from './set-async';
+import * as TS from '../types';
+import { setAsync } from '../utils';
 
-export default function createChip<ChipState = unknown>(
-  chipKey: string,
-  chipState: ChipState,
-): TS.IChip<ChipState> {
+export default function createChip<T = unknown>(chipKey: string, chipState: T): TS.IChip<T> {
   return {
     chipKey,
     data: chipState,
@@ -18,13 +16,13 @@ export default function createChip<ChipState = unknown>(
     getStatus() {
       return this.status;
     },
-    setData(data, actions) {
-      if (data instanceof Promise) {
-        setAsync<ChipState>(data, this, actions);
-      } else {
-        this.data = data;
-        this.setStatus({ type: 'IDLE' });
-      }
+    setData(update, actions) {
+      if (update instanceof Promise) setAsync(update, this, actions);
+      else if (typeof update === 'function') {
+        if (typeof this.data === 'string') this.data = produce(new Object(), update as any);
+        else this.data = produce<T>(this.data, update as any);
+      } else this.data = update;
+      this.setStatus({ type: 'IDLE' });
     },
     setStatus(status) {
       this.status = status;

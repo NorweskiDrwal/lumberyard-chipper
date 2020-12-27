@@ -1,20 +1,21 @@
 import * as React from 'react';
-import mockAsync from 'src/lib/utils/mock-async';
+import { mockAsync } from 'src/lib/utils';
 
 import { useChip } from '../lib';
 
 const One: React.FC = () => {
-  const one = useChip('one');
-  const two = useChip('two');
-  const one_A = useChip('one.A');
-  const one_B = useChip('one.B');
+  const authentication = useChip('authentication');
+  const uid = useChip('authentication.tokens.uid');
+  const remote = useChip('authentication.tokens.remote');
 
   const onClick = () => {
-    //
-    two.setData('asd');
+    authentication.setData((data) => {
+      data.certificate = { alcohol: 2547, bodd: '123' };
+    });
+    // authentication.setData('dupa');
   };
   const onClickOne = () => {
-    one.setData(mockAsync('dupa', 2000), {
+    authentication.setData(mockAsync({ certificate: { alcohol: 897878, bodd: 'gjnbojr' } }, 2000), {
       onInit: () => console.log('init'),
       onError: () => console.log('error'),
       onSuccess: () => console.log('finish'),
@@ -23,19 +24,24 @@ const One: React.FC = () => {
 
   return (
     <div>
-      <button onClick={onClick}>change</button>
-      <button onClick={onClickOne}>change one</button>
+      <div style={{ backgroundColor: 'red', padding: 4 }}>
+        <button onClick={onClick}>change</button>
+        <button onClick={onClickOne}>change one</button>
+        <p>authentication</p>
+        <div>{JSON.stringify(authentication.data)}</div>
+        <div>{authentication.status.type}</div>
 
-      <div style={{ backgroundColor: 'red' }}>
-        <p>ONE</p>
-        <div>{JSON.stringify(one.data)}</div>
-        <div>{one.status.type}</div>
-      </div>
+        <div style={{ backgroundColor: 'brown', margin: 4, padding: 4 }}>
+          <span>uid</span>
+          <div>{JSON.stringify(uid.data)}</div>
+          <div>{uid.status.type}</div>
+        </div>
 
-      <div style={{ backgroundColor: 'red' }}>
-        <p>ONE_A_CHIP</p>
-        <div>{JSON.stringify(one_A.data)}</div>
-        <div>{one_B.status.type}</div>
+        <div style={{ backgroundColor: 'brown', margin: 4, padding: 4 }}>
+          <span>remote</span>
+          <div>{JSON.stringify(remote.data)}</div>
+          <div>{remote.status.type}</div>
+        </div>
       </div>
     </div>
   );
