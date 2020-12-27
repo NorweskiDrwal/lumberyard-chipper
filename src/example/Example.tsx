@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { plantSeed } from '../lib';
+import { plantTree } from '../lib';
 import One from './One';
 import Two from './Two';
 import Three from './Three';
 
-plantSeed(
+plantTree(
   'one',
   {
     id: 'otis',
@@ -28,7 +28,7 @@ plantSeed(
     ],
   },
 );
-plantSeed('two', 'two data');
+plantTree('two', 'two data');
 
 const Example: React.FC = () => {
   return (

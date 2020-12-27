@@ -7,65 +7,37 @@ import { branchify, createChip, locateChip } from './utils';
 
 const Roots: TS.IRoots = new Map([]);
 
-export function plantSeed<SeedState = any>(
-  seedKey: string,
-  seedState: SeedState,
-  seedOptions?: TS.ISeedOptions<any>,
-) {
-  const isSeedPlanted = Roots.has(seedKey);
-
-  if (!isSeedPlanted) {
-    const trunkKey = seedKey;
-
-    const branches = new Map(
-      (branchify(trunkKey, seedOptions?.branches) as unknown) as TS.IBranches<SeedState>,
-    );
-
-    const Trunk = {
-      branches,
-      trunkKey,
-      chip: createChip(trunkKey, seedState),
-    };
-
-    Roots.set(trunkKey, Trunk);
+export function plantTree<T = any>(key: string, state: T, options?: TS.ITrunkOptions<any>) {
+  if (!Roots.has(key)) {
+    const branches = new Map((branchify(key, options?.branches) as unknown) as TS.IBranches<T>);
+    const Trunk = { branches, trunkKey: key, chip: createChip(key, state) };
+    Roots.set(key, Trunk);
   }
 }
 
-export function useChip<ChipState = any>(chipKey: string): TS.IUseChip<ChipState> {
+export function useChip<State = any>(chipKey: string): TS.IUseChip<State> {
   const Chip = React.useMemo(() => locateChip(chipKey, Roots).chip, [chipKey]);
 
   const [, setStatus] = React.useState(Chip?.status);
-
-  const subscriber = React.useCallback((update: TS.IStatus) => {
-    setStatus(update);
-  }, []);
+  const subscriber = React.useCallback(setStatus, []);
 
   React.useEffect(() => {
     Chip?.subscribe(subscriber);
-
-    return () => {
-      Chip?.unsubscribe(subscriber);
-    };
+    return () => Chip?.unsubscribe(subscriber);
   }, []);
 
-  const setLocalData = (data: ChipState, actions?: TS.IAsyncActions<ChipState>) => {
+  const setLocalData = (data: State, actions?: TS.IAsyncActions<State>) => {
     if (JSON.stringify(Chip?.data) !== JSON.stringify(data)) {
-      if (Chip?.getStatus().type !== 'LOAD') {
-        Chip?.setData(data, actions);
-      }
+      if (Chip?.getStatus().type !== 'LOAD') Chip?.setData(data, actions);
     }
   };
 
   const setLocalStatus = (type: TS.IStatus['type'], message?: TS.IStatus['message']) => {
     const chipStatus = Chip?.getStatus();
     if (chipStatus?.type !== type) {
-      if (chipStatus?.type !== 'LOAD') {
-        Chip?.setStatus({ type, message });
-      }
+      if (chipStatus?.type !== 'LOAD') Chip?.setStatus({ type, message });
     }
   };
-
-  console.log('Roots', Roots);
 
   return {
     setData: setLocalData,

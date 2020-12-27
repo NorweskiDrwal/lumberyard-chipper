@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type IData<State = any> = State | null | undefined | string;
-export type ISeedOptions<BranchState = any> = Partial<{
+export type ITrunkOptions<BranchState = any> = Partial<{
   branches: [string, BranchState][];
 }>;
 export type IRoots<RootState = any> = Map<string, ITrunk<RootState>>;
