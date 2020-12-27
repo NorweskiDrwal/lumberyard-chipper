@@ -18,19 +18,14 @@ export default function createChip<ChipState = unknown>(
     getStatus() {
       return this.status;
     },
-    setData(update) {
-      this.data = update(this.data);
-      // if (typeof update === 'function') {
-      // }
+    setData(data, actions) {
+      if (data instanceof Promise) {
+        setAsync<ChipState>(data, this, actions);
+      } else {
+        this.data = data;
+        this.setStatus({ type: 'IDLE' });
+      }
     },
-    // setData(data, actions) {
-    //   if (data instanceof Promise) {
-    //     setAsync<ChipState>(data, this, actions);
-    //   } else {
-    //     this.data = data;
-    //     this.setStatus({ type: 'IDLE' });
-    //   }
-    // },
     setStatus(status) {
       this.status = status;
       this.subscribers.forEach((sub) => {

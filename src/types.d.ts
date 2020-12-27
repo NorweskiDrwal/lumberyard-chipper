@@ -1,6 +1,4 @@
-import { ILeaf } from './types.d';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Draft } from 'immer';
 
 export type IData<State = any> = State | null | undefined | string;
 export type ISeedOptions<BranchState = any> = Partial<{
@@ -63,8 +61,7 @@ export interface IChip<ChipState = any> {
   subscribe: (updater: ISubscriber) => void;
   unsubscribe: (updater: ISubscriber) => void;
   //
-  setData: (update: (draft: IChip<ChipState>['data']) => void) => void;
-  // setData: (data: IChip<ChipState>['data'], actions?: IAsyncActions<ChipState>) => void;
+  setData: (data: IChip<ChipState>['data'], actions?: IAsyncActions<ChipState>) => void;
   setStatus: (type: TS.IStatus['type'], message?: TS.IStatus['message']) => void;
   //
   readonly chipKey: string;
@@ -73,7 +70,8 @@ export interface IChip<ChipState = any> {
 export interface IUseChip<ChipState = any> {
   data: IChip<ChipState>['data'];
   status: IChip<ChipState>['status'];
-  setData: (update: (draft: IChip<ChipState>['data']) => void) => void;
+  setData: IChip<ChipState>['setData'];
+  setStatus: IChip<ChipState>['setStatus'];
 }
 
 export interface IUseChipper<ChipperState = any> {
@@ -81,7 +79,4 @@ export interface IUseChipper<ChipperState = any> {
   status: IChip<ChipperState>['status'];
   setData: IChip<ChipState>['setData'];
   setStatus: IChip<ChipState>['setStatus'];
-  //
-  // getChip: (chipKey: string) => IUseChipper<ChipperState>['data'];
-  // setChips: (chipKey: string) => IUseChipper<ChipperState>['status'];
 }

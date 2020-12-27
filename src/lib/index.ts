@@ -1,5 +1,5 @@
-import { produce } from 'immer';
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import * as React from 'react';
 
 import * as TS from '../types';
@@ -31,36 +31,22 @@ export function plantSeed<SeedState = any>(
   }
 }
 
-export function useChipper<ChipperState = any>(trunkKey: string) {
-  // export function useChipper<ChipperState = any>(trunkKey: string): TS.IUseChipper<ChipperState> {
-  const TargetChip = useChip(trunkKey);
-  const Chipper = React.useCallback((chipKey: string) => locateChip(chipKey, Roots), [trunkKey]);
-
-  return;
-}
-
 export function useChip<ChipState = any>(chipKey: string): TS.IUseChip<ChipState> {
   const Chip = React.useMemo(() => locateChip(chipKey, Roots).chip, [chipKey]);
 
   const [, setStatus] = React.useState(Chip?.status);
 
-  // const subscriber = React.useCallback((update: TS.IStatus) => {
-  //   setStatus(update);
-  // }, []);
+  const subscriber = React.useCallback((update: TS.IStatus) => {
+    setStatus(update);
+  }, []);
 
   React.useEffect(() => {
-    const subscriber = (update: TS.IStatus) => {
-      setStatus(update);
-    };
-
     Chip?.subscribe(subscriber);
 
     return () => {
       Chip?.unsubscribe(subscriber);
     };
   }, []);
-
-  const setData = React.useCallback<TS.IDispatchData<ChipState>>(Chip.setData, []);
 
   const setLocalData = (data: ChipState, actions?: TS.IAsyncActions<ChipState>) => {
     if (JSON.stringify(Chip?.data) !== JSON.stringify(data)) {
@@ -82,7 +68,8 @@ export function useChip<ChipState = any>(chipKey: string): TS.IUseChip<ChipState
   console.log('Roots', Roots);
 
   return {
-    setData,
+    setData: setLocalData,
+    setStatus: setLocalStatus,
     data: Chip?.getData() || null,
     status: Chip?.getStatus() || { type: 'IDLE' },
   };

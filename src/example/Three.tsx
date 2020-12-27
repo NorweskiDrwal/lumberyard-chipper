@@ -1,16 +1,16 @@
 import * as React from 'react';
 
-import { useChip, useChipper } from '../lib';
+import { useChip } from '../lib';
 
 const Three: React.FC = () => {
-  const one = useChipper('one.A');
+  const one = useChip('one');
 
   return (
     <div>
       <div style={{ backgroundColor: 'red' }}>
-        <p>ONE_A</p>
-        {/* <div>{JSON.stringify(one.getData('one.A'))}</div> */}
-        {/* <div>{one_A.status.type}</div> */}
+        <p>ONE</p>
+        <div>{JSON.stringify(one.data)}</div>
+        <div>{one.status.type}</div>
       </div>
     </div>
   );
