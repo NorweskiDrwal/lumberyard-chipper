@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as TS from '../../types';
+import * as TS from '../types';
 import { createChip } from '../utils';
 
 export default function twigify<State = any>(parentKey: string, state: State) {

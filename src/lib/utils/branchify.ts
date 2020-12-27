@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as TS from '../../types';
+import * as TS from '../types';
 import { createChip, twigify } from '../utils';
 
 export default function branchify<State = any>(key: string, branches?: [string, State][]) {

@@ -39,7 +39,7 @@ export type ILocateChip<State> =
   | TS.ILeaf<State>
   | undefined;
 
-export type ISubscriber = (v: IStatus) => void;
+export type ISubscriber<T> = (v: IData<T>) => void;
 export type IDispatch<T> = (f: (draft: IChip<T>) => void) => void;
 export type IDispatchData<T> = (f: (draft: IChip<T>['data']) => void) => void;
 

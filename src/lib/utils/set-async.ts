@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as TS from '../../types';
+import * as TS from '../types';
 
 export default async function setAsync<State>(
   async: Promise<TS.IData<State> | void>,

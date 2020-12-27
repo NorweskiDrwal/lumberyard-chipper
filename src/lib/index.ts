@@ -2,14 +2,14 @@
 
 import * as React from 'react';
 
-import * as TS from '../types';
+import * as TS from './types';
 import { branchify, createChip, locateChip } from './utils';
 
 const Roots: TS.IRoots = new Map([]);
 
-export function plantTree<T = any>(key: string, state: T, options?: TS.ITrunkOptions<any>) {
+export function plantTree<T = any, B = any>(key: string, state: T, options?: TS.ITrunkOptions<B>) {
   if (!Roots.has(key)) {
-    const branches = new Map((branchify(key, options?.branches) as unknown) as TS.IBranches<T>);
+    const branches = new Map((branchify(key, options?.branches) as unknown) as TS.IBranches<B>);
     const Trunk = { branches, trunkKey: key, chip: createChip(key, state) };
     Roots.set(key, Trunk);
   }
@@ -18,8 +18,8 @@ export function plantTree<T = any>(key: string, state: T, options?: TS.ITrunkOpt
 export function useChip<State = any>(chipKey: string): TS.IUseChip<State> {
   const Chip = React.useMemo(() => locateChip(chipKey, Roots).chip, [chipKey]);
 
-  const [, setStatus] = React.useState(Chip?.status);
-  const subscriber = React.useCallback(setStatus, []);
+  const [, setData] = React.useState(Chip?.data);
+  const subscriber = React.useCallback(setData, []);
 
   React.useEffect(() => {
     Chip?.subscribe(subscriber);

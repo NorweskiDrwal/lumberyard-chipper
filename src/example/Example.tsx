@@ -5,9 +5,13 @@ import One from './One';
 import Two from './Two';
 import Three from './Three';
 
-plantTree('authentication', null, {
-  branches: [['tokens', { uid: '123456789', remote: 'd7gh473nd7' }]],
-});
+plantTree(
+  'authentication',
+  { certificate: 'zzz000zz00z0' },
+  {
+    branches: [['tokens', { uid: '123456789', remote: 'd7gh473nd7' }]],
+  },
+);
 plantTree('two', 'two data');
 
 const Example: React.FC = () => {

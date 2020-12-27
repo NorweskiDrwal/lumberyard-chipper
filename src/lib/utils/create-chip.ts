@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as TS from '../../types';
+import * as TS from '../types';
 import { setAsync } from '../utils';
 
 export default function createChip<T = any>(chipKey: string, chipState: T): TS.IChip<T> {
