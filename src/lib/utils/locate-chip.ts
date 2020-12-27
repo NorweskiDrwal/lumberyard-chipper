@@ -2,10 +2,7 @@
 
 import * as TS from '../types';
 
-export default function locateChip<T = any>(
-  chipKey: string,
-  roots: TS.IRoots<T>,
-): TS.ILocateChip<T> {
+export default function locateChip<T>(chipKey: string, roots: TS.IRoots<T>): TS.ILocateChip<T> {
   const pith = chipKey.split('.');
   const trKey = pith[0];
   const brKey = `${trKey}.${pith[1]}`;

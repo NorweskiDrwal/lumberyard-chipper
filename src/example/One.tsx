@@ -1,5 +1,5 @@
 import * as React from 'react';
-import mockAsync from 'src/lib/utils/mock-async';
+import { mockAsync } from 'src/lib/utils';
 
 import { useChip } from '../lib';
 
@@ -9,10 +9,13 @@ const One: React.FC = () => {
   const remote = useChip('authentication.tokens.remote');
 
   const onClick = () => {
-    //
+    authentication.setData((data) => {
+      data.certificate = { alcohol: 2547, bodd: '123' };
+    });
+    // authentication.setData('dupa');
   };
   const onClickOne = () => {
-    authentication.setData(mockAsync('dupa', 2000), {
+    authentication.setData(mockAsync({ certificate: { alcohol: 897878, bodd: 'gjnbojr' } }, 2000), {
       onInit: () => console.log('init'),
       onError: () => console.log('error'),
       onSuccess: () => console.log('finish'),

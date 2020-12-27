@@ -1,30 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-export type IData<State = any> = State | null | undefined | string;
-export type ITrunkOptions<BranchState = any> = Partial<{
+export type ITrunkOptions<BranchState = unknown> = Partial<{
   branches: [string, BranchState][];
 }>;
 export type IRoots<RootState = any> = Map<string, ITrunk<RootState>>;
-export interface ITrunk<TrunkState = any> {
+export interface ITrunk<TrunkState = unknown> {
   trunkKey: string;
   chip: IChip<TrunkState>;
   branches: IBranches<TrunkState>;
   unrooted?: boolean;
 }
-export type IBranches<State = any> = Map<string, IBranch<State>>;
-export interface IBranch<BranchState = any> {
+export type IBranches<State = unknown> = Map<string, IBranch<State>>;
+export interface IBranch<BranchState = unknown> {
   branchKey: string;
   chip: IChip<BranchState>;
   twigs: ITwigs<BranchState>;
 }
-export type ITwigs<State = any> = Map<string, ITwig<State>>;
-export interface ITwig<TwigState = any> {
+export type ITwigs<State = unknown> = Map<string, ITwig<State>>;
+export interface ITwig<TwigState = unknown> {
   twigKey: string;
   chip: IChip<TwigState>;
   leafs: ILeafs<TwigState>;
 }
-export type ILeafs<State = any> = Map<string, ILeaf<State>>;
-export interface ILeaf<LeafState = any> {
+export type ILeafs<State = unknown> = Map<string, ILeaf<State>>;
+export interface ILeaf<LeafState = unknown> {
   leafKey: string;
   chip: IChip<LeafState>;
 }
@@ -36,45 +33,45 @@ export type ILocateChip<State> =
   | TS.ITrunk<State>
   | TS.IBranch<State>
   | TS.ITwig<State>
-  | TS.ILeaf<State>
-  | undefined;
+  | TS.ILeaf<State>;
 
-export type ISubscriber<T> = (v: IData<T>) => void;
-export type IDispatch<T> = (f: (draft: IChip<T>) => void) => void;
-export type IDispatchData<T> = (f: (draft: IChip<T>['data']) => void) => void;
+export type ISubscribe = (v: IStatus) => void;
+export type IData<T = unknown> = T | null | undefined | string;
+export type IReducedData<T> = (data: Draft<IData<T>>) => void;
+export type ISetData<T> = IData<T> | IReducedData<T>;
 
 export interface IAsyncActions<State> {
   onInit?: () => void;
   onError?: () => void;
   onSuccess?: () => void;
-  responseWrap?: (...args: any[]) => IChip<State>['data'];
+  responseWrap?: (...args: unknown[]) => IChip<State>['data'];
 }
 
-export interface IChip<ChipState = any> {
+export interface IChip<ChipState = unknown> {
   status: IStatus;
   data: IData<ChipState>;
-  subscribers: ISubscriber[];
+  subscribers: ISubscribe[];
   //
   getData: () => IChip<ChipState>['data'];
   getStatus: () => IChip<ChipState>['status'];
   //
-  subscribe: (updater: ISubscriber) => void;
-  unsubscribe: (updater: ISubscriber) => void;
+  subscribe: (updater: ISubscribe) => void;
+  unsubscribe: (updater: ISubscribe) => void;
   //
-  setData: (data: IChip<ChipState>['data'], actions?: IAsyncActions<ChipState>) => void;
-  setStatus: (type: TS.IStatus['type'], message?: TS.IStatus['message']) => void;
+  setStatus: (status: IStatus) => void;
+  setData: (update: ISetData<ChipState>, actions?: IAsyncActions<T>) => void;
   //
   readonly chipKey: string;
 }
 
-export interface IUseChip<ChipState = any> {
+export interface IUseChip<ChipState = unknown> {
   data: IChip<ChipState>['data'];
   status: IChip<ChipState>['status'];
   setData: IChip<ChipState>['setData'];
-  setStatus: IChip<ChipState>['setStatus'];
+  setStatus: (type: IStatus['type'], message?: IStatus['message']) => void;
 }
 
-export interface IUseChipper<ChipperState = any> {
+export interface IUseChipper<ChipperState = unknown> {
   data: IChip<ChipperState>['data'];
   status: IChip<ChipperState>['status'];
   setData: IChip<ChipState>['setData'];
