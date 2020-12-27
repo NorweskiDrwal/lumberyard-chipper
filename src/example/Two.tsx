@@ -3,18 +3,15 @@ import * as React from 'react';
 import { useChip } from '../lib';
 
 const Two: React.FC = () => {
-  const one_B = useChip('one.B');
   const two = useChip('two');
 
-  const onClickOne_B = () => {
-    // one_B.setData('dupa');
+  const onClick = () => {
+    two.setData('wrberkjbiwr');
   };
-
-  console.log('two', two);
 
   return (
     <div>
-      <button onClick={onClickOne_B}>change one_b</button>
+      <button onClick={onClick}>change two</button>
 
       <div style={{ backgroundColor: 'red' }}>
         <p>TWO</p>

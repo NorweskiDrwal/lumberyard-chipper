@@ -4,17 +4,15 @@ import mockAsync from 'src/lib/utils/mock-async';
 import { useChip } from '../lib';
 
 const One: React.FC = () => {
-  const one = useChip('one');
-  const two = useChip('two');
-  const one_A = useChip('one.A');
-  const one_B = useChip('one.B');
+  const authentication = useChip('authentication');
+  const uid = useChip('authentication.tokens.uid');
+  const remote = useChip('authentication.tokens.remote');
 
   const onClick = () => {
     //
-    two.setData('asd');
   };
   const onClickOne = () => {
-    one.setData(mockAsync('dupa', 2000), {
+    authentication.setData(mockAsync('dupa', 2000), {
       onInit: () => console.log('init'),
       onError: () => console.log('error'),
       onSuccess: () => console.log('finish'),
@@ -27,15 +25,21 @@ const One: React.FC = () => {
       <button onClick={onClickOne}>change one</button>
 
       <div style={{ backgroundColor: 'red' }}>
-        <p>ONE</p>
-        <div>{JSON.stringify(one.data)}</div>
-        <div>{one.status.type}</div>
+        <p>authentication</p>
+        <div>{JSON.stringify(authentication.data)}</div>
+        <div>{authentication.status.type}</div>
       </div>
 
       <div style={{ backgroundColor: 'red' }}>
-        <p>ONE_A_CHIP</p>
-        <div>{JSON.stringify(one_A.data)}</div>
-        <div>{one_B.status.type}</div>
+        <p>uid</p>
+        <div>{JSON.stringify(uid.data)}</div>
+        <div>{uid.status.type}</div>
+      </div>
+
+      <div style={{ backgroundColor: 'red' }}>
+        <p>remote</p>
+        <div>{JSON.stringify(remote.data)}</div>
+        <div>{remote.status.type}</div>
       </div>
     </div>
   );
