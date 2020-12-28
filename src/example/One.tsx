@@ -5,21 +5,22 @@ import { useChip, useChipper } from '../lib';
 
 const One: React.FC = () => {
   const authentication = useChipper('authentication');
-  const user = useChip('authentication.tokens');
+  const uid = useChip('authentication.tokens.uid');
   const remote = useChip('authentication.tokens.remote');
 
   const onClick = () => {
-    // authentication.setData((data) => {
-    //   data.certificate = { alcohol: 2547, bodd: '123' };
-    // });
-    authentication.setData('dupa');
+    authentication.setData((data) => {
+      data.certificate = { alcohol: 2547, bodd: '123' };
+    });
+    // authentication.setData('dupa');
 
-    authentication.chipper.setData(
-      'location.place',
-      mockAsync((data) => {
-        data.geo = 'asdasd';
-      }, 2000),
-    );
+    // authentication.chipper.setData(
+    //   'location.place',
+    //   mockAsync((data) => {
+    //     data.geo = 'asdasd';
+    //   }, 2000),
+    // );
+    // authentication.chipper.api.delete('location.place');
   };
   const onClickOne = () => {
     authentication.setData(mockAsync({ certificate: { alcohol: 897878, bodd: 'gjnbojr' } }, 2000), {
@@ -39,9 +40,9 @@ const One: React.FC = () => {
         <div>{authentication.status.type}</div>
 
         <div style={{ backgroundColor: 'brown', margin: 4, padding: 4 }}>
-          <span>user</span>
-          <div>{JSON.stringify(user.data)}</div>
-          <div>{user.status.type}</div>
+          <span>uid</span>
+          <div>{JSON.stringify(uid.data)}</div>
+          <div>{uid.status.type}</div>
         </div>
 
         <div style={{ backgroundColor: 'brown', margin: 4, padding: 4 }}>

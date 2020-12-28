@@ -31,6 +31,7 @@ export default async function setAsync<State>(
     yield;
     // runAsync_SetData
     const update = asyncActions?.responseWrap ? asyncActions.responseWrap(resp) : resp;
+    // yield (chip.data = update);
     if (typeof update === 'function') {
       if (typeof chip.data === 'string') yield ((chip.data as any) = produce({}, update as any));
       else yield ((chip.data as any) = produce(chip.data, update as any));
