@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { mockAsync } from 'src/lib/utils';
 
-import { useChip } from '../lib';
+import { useChip, useChipper } from '../lib';
 
 const One: React.FC = () => {
-  const authentication = useChip('authentication');
+  const authentication = useChipper('authentication');
   const uid = useChip('authentication.tokens.uid');
   const remote = useChip('authentication.tokens.remote');
 
@@ -13,6 +13,14 @@ const One: React.FC = () => {
       data.certificate = { alcohol: 2547, bodd: '123' };
     });
     // authentication.setData('dupa');
+
+    // authentication.chipper.setData(
+    //   'location.place',
+    //   mockAsync((data) => {
+    //     data.geo = 'asdasd';
+    //   }, 2000),
+    // );
+    // authentication.chipper.api.delete('location.place');
   };
   const onClickOne = () => {
     authentication.setData(mockAsync({ certificate: { alcohol: 897878, bodd: 'gjnbojr' } }, 2000), {
@@ -24,9 +32,9 @@ const One: React.FC = () => {
 
   return (
     <div>
-      <div style={{ backgroundColor: 'red', padding: 4 }}>
-        <button onClick={onClick}>change</button>
-        <button onClick={onClickOne}>change one</button>
+      <div style={{ backgroundColor: 'red', margin: 4, padding: 4 }}>
+        <button onClick={onClick}>change two via one</button>
+        <button onClick={onClickOne}>async one</button>
         <p>authentication</p>
         <div>{JSON.stringify(authentication.data)}</div>
         <div>{authentication.status.type}</div>

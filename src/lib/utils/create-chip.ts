@@ -19,7 +19,7 @@ export default function createChip<T = unknown>(chipKey: string, chipState: T): 
     setData(update, actions) {
       if (update instanceof Promise) setAsync(update, this, actions);
       else if (typeof update === 'function') {
-        if (typeof this.data === 'string') this.data = produce(new Object(), update as any);
+        if (typeof this.data === 'string') this.data = produce({}, update as any);
         else this.data = produce<T>(this.data, update as any);
       } else this.data = update;
       this.setStatus({ type: 'IDLE' });

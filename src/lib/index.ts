@@ -9,10 +9,52 @@ const Roots: TS.IRoots = new Map([]);
 
 export function plantTree<T = any, B = any>(key: string, state: T, options?: TS.ITrunkOptions<B>) {
   if (!Roots.has(key)) {
-    const branches = new Map((branchify(key, options?.branches) as unknown) as TS.IBranches<B>);
-    const Trunk = { branches, trunkKey: key, chip: createChip<T>(key, state) };
+    const children = new Map((branchify(key, options?.branches) as unknown) as TS.IBranches<B>);
+    const Trunk = { children, key, chip: createChip<T>(key, state) };
     Roots.set(key, Trunk);
   }
+}
+
+export function useChipper<T = any>(chipperKey: string): TS.IUseChipper<T> {
+  const CurrentChip = useChip<T>(chipperKey);
+  const Chipper = React.useCallback((chipKey) => locateChip(chipKey, Roots), [chipperKey]);
+
+  const deleteTarget = React.useCallback((chipKey) => {
+    if (chipKey !== chipperKey) {
+      const pith = chipKey.split('.');
+      const parent = pith
+        .slice(0, pith.length - 1)
+        .toString()
+        .replace(',', '.');
+
+      const TargetChip = Chipper(parent);
+      TargetChip.children.delete(chipKey);
+    } else console.warn(`ChipperWarn: You're cutting the branch (${chipKey}) you're sitting on`);
+  }, []);
+
+  const getTargetData = React.useCallback((chipKey: string) => Chipper(chipKey).chip.getData(), []);
+
+  const setTargetData = React.useCallback(
+    (chipKey: string, update: TS.ISetData<T>, asyncActions?: TS.IAsyncActions<T>) => {
+      const TargetChip = Chipper(chipKey).chip;
+
+      if (JSON.stringify(TargetChip?.data) !== JSON.stringify(update)) {
+        if (TargetChip?.getStatus().type !== 'LOAD') TargetChip?.setData(update, asyncActions);
+      }
+    },
+    [],
+  );
+
+  return {
+    ...CurrentChip,
+    chipper: {
+      getData: getTargetData,
+      setData: setTargetData,
+      api: {
+        delete: deleteTarget,
+      },
+    },
+  };
 }
 
 export function useChip<State = unknown>(chipKey: string): TS.IUseChip<State> {
@@ -26,9 +68,9 @@ export function useChip<State = unknown>(chipKey: string): TS.IUseChip<State> {
     return () => Chip?.unsubscribe(subscriber);
   }, []);
 
-  const setData = (update: TS.ISetData<State>, actions?: TS.IAsyncActions<State>) => {
+  const setData = (update: TS.ISetData<State>, asyncActions?: TS.IAsyncActions<State>) => {
     if (JSON.stringify(Chip?.data) !== JSON.stringify(update)) {
-      if (Chip?.getStatus().type !== 'LOAD') Chip?.setData(update, actions);
+      if (Chip?.getStatus().type !== 'LOAD') Chip?.setData(update, asyncActions);
     }
   };
 
