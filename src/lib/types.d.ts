@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type ITrunkOptions<T = any> = Partial<{
+  uproot: boolean;
   branches: [string, T][];
 }>;
 export type IRoots<T = any> = Map<string, IParent<T>>;
@@ -10,6 +11,7 @@ export interface IParent<T = any> {
   key: string;
   chip: IChip<T>;
   children: IBranches<T>;
+  readonly uproot?: boolean;
 }
 export interface IStatus {
   type: 'LOAD' | 'IDLE' | 'SUCCESS' | 'ERROR';
@@ -56,8 +58,5 @@ export interface IUseChipper<T = any> extends IUseChip<T> {
   chipper: {
     getData: (chipKey: string) => IData<T>;
     setData: (chipKey: string, update: ISetData<T>, asyncActions?: IAsyncActions<T>) => void;
-    api: {
-      delete: (chipKey: string) => void;
-    };
   };
 }
